@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using CC2.Models;
-using DevExpress.Mvvm.POCO;
 using Microsoft.Win32;
 
 namespace CC2
@@ -10,19 +9,22 @@ namespace CC2
     public class MainViewModel
     {
         public virtual string FileContents { get; set; }
-        public virtual string WordToFind { get; set; }
+        public virtual string WordToFind { get; set; } = String.Empty;
         public virtual string SearchResults { get; set; }
 
 
         public void OpenFile()
         {
             OpenFileDialog dlg = new OpenFileDialog();
-            dlg.ShowDialog();
+            var dialogSuccess = dlg.ShowDialog() ?? false;
 
-            string filename = dlg.FileName;
-            string path = filename;
+            if (dialogSuccess)
+            {
+                string filename = dlg.FileName;
+                string path = filename;
 
-            ReadFile(path);
+                ReadFile(path);
+            }
         }
 
         public void ReadFile(string path)
@@ -49,19 +51,18 @@ namespace CC2
             }
         }
 
-        public void CheckIfValid()
+        public void CheckIfValid() //rename to Search
         {
-            if (WordToFind != null)
+
+            if (WordToFind.All(Char.IsLetter))
             {
-                if (WordToFind.All(Char.IsLetter))
-                {
-                    WordSearch();
-                }
-                else
-                {
-                    SearchResults = "Invalid Input";
-                }
+                WordSearch();
             }
+            else
+            {
+                SearchResults = "Invalid Input";
+            }
+
         }
     }
 }
